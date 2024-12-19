@@ -87,7 +87,7 @@ class RegisterViewController: UIViewController {
             DispatchQueue.main.async {
                 if let user = self.viewModel.user {
                     self.statusLabel.text = "Welcome, \(user.username)! Registration successful."
-                    // переход на экран LoginViewController при успешной регистрации в
+                    // переход на экран LoginViewController при успешной регистрации в приложении /
                 } else if let error = self.viewModel.error {
                     self.statusLabel.text = "Error: \(error)"
                 }
