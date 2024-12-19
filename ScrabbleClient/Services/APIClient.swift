@@ -12,20 +12,20 @@ class APIClient: APIClientProtocol {
     private let baseURL = Constants.API.baseURL
 
     // MARK: - Register
-    func register(username: String, password: String, completion: @escaping (Result<User, Error>) -> Void) {
-        guard let url = URL(string: "\(baseURL)/register") else { return }
+    func register(username: String, email: String, password: String, completion: @escaping (Result<AuthResponse, Error>) -> Void) {
+        guard let url = URL(string: "\(baseURL)/v1/auth/register") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let body = ["username": username, "password": password]
+        let body = ["username": username, "password": password, "email": email]
         request.httpBody = try? JSONEncoder().encode(body)
         
         URLSession.shared.dataTask(with: request) { data, _, error in
             if let data = data {
                 do {
-                    let user = try JSONDecoder().decode(User.self, from: data)
-                    completion(.success(user))
+                    let authResponse = try JSONDecoder().decode(AuthResponse.self, from: data)
+                    completion(.success(authResponse))
                 } catch {
                     completion(.failure(error))
                 }
@@ -36,24 +36,41 @@ class APIClient: APIClientProtocol {
     }
 
     // MARK: - Login
-    func login(username: String, password: String, completion: @escaping (Result<User, Error>) -> Void) {
-        guard let url = URL(string: "\(baseURL)/login") else { return }
+    func login(email: String, password: String, completion: @escaping (Result<AuthResponse, Error>) -> Void) {
+        guard let url = URL(string: "\(baseURL)/v1/auth/login") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let body = ["username": username, "password": password]
-        request.httpBody = try? JSONEncoder().encode(body)
+//        let body = ["username": username, "password": password]
+//        request.httpBody = try? JSONEncoder().encode(body)
+        
+        let credentials = "\(email):\(password)"
+        guard let credentialData = credentials.data(using: .utf8) else {
+            print("Failed to encode credentials")
+            return
+        }
+        
+        let base64Credentials = credentialData.base64EncodedString()
+        request.setValue("Basic \(base64Credentials)", forHTTPHeaderField: "Authorization")
+        
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        print("[ DEBUG ]: login request created")
         
         URLSession.shared.dataTask(with: request) { data, _, error in
+            print("[ DEBUG ]: response: \(print(String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)))")
             if let data = data {
                 do {
-                    let user = try JSONDecoder().decode(User.self, from: data)
-                    completion(.success(user))
+                    let authResponse = try JSONDecoder().decode(AuthResponse.self, from: data)
+                    print("[ DEBUG ]: logged in successfullly")
+                    completion(.success(authResponse))
                 } catch {
+                    print("[ DEBUG ]: failure logging in")
                     completion(.failure(error))
                 }
             } else if let error = error {
+                print("[ DEBUG ]: error logging in")
                 completion(.failure(error))
             }
         }.resume()

@@ -14,6 +14,15 @@ class RegisterViewController: UIViewController {
     private let usernameField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Username"
+        textField.text = "username"
+        textField.borderStyle = .roundedRect
+        return textField
+    }()
+
+    private let emailField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Email"
+        textField.text = "email"
         textField.borderStyle = .roundedRect
         return textField
     }()
@@ -21,7 +30,8 @@ class RegisterViewController: UIViewController {
     private let passwordField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Password"
-        textField.isSecureTextEntry = true
+        textField.text = "password"
+//        textField.isSecureTextEntry = true
         textField.borderStyle = .roundedRect
         return textField
     }()
@@ -47,11 +57,13 @@ class RegisterViewController: UIViewController {
     
     private func setupViews() {
         view.addSubview(usernameField)
+        view.addSubview(emailField)
         view.addSubview(passwordField)
         view.addSubview(registerButton)
         view.addSubview(statusLabel)
         
         usernameField.translatesAutoresizingMaskIntoConstraints = false
+        emailField.translatesAutoresizingMaskIntoConstraints = false
         passwordField.translatesAutoresizingMaskIntoConstraints = false
         registerButton.translatesAutoresizingMaskIntoConstraints = false
         statusLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -61,8 +73,12 @@ class RegisterViewController: UIViewController {
             usernameField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -60),
             usernameField.widthAnchor.constraint(equalToConstant: 250),
             
+            emailField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emailField.topAnchor.constraint(equalTo: usernameField.bottomAnchor, constant: 20),
+            emailField.widthAnchor.constraint(equalToConstant: 250),
+            
             passwordField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            passwordField.topAnchor.constraint(equalTo: usernameField.bottomAnchor, constant: 20),
+            passwordField.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: 20),
             passwordField.widthAnchor.constraint(equalToConstant: 250),
             
             registerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -78,25 +94,22 @@ class RegisterViewController: UIViewController {
     
     @objc private func registerTapped() {
         guard let username = usernameField.text, !username.isEmpty,
+              let email = emailField.text, !email.isEmpty,
               let password = passwordField.text, !password.isEmpty else {
             statusLabel.text = "Please fill in all fields."
             return
         }
         
-        viewModel.register(username: username, password: password) {
+        viewModel.register(username: username, email: email, password: password) {
             DispatchQueue.main.async {
-                if let user = self.viewModel.user {
-                    self.statusLabel.text = "Welcome, \(user.username)! Registration successful."
-                    
-                    self.navigationController?.popViewController(animated: true)
+                if let authResponse = self.viewModel.authResponse {
+                    self.statusLabel.text = "Welcome, \(authResponse.user.id)! Registration successful."
                 } else if let error = self.viewModel.error {
+                    print(error)
                     self.statusLabel.text = "Error: \(error)"
-                    
-                    self.navigationController?.popViewController(animated: true)
                 }
             }
         }
     }
-
 }
 

@@ -8,14 +8,14 @@
 import Foundation
 
 class AuthViewModel {
-    var user: User?
+    var authResponse: AuthResponse?
     var error: String?
 
-    func register(username: String, password: String, completion: @escaping () -> Void) {
-        APIClient.shared.register(username: username, password: password) { result in
+    func register(username: String, email: String, password: String, completion: @escaping () -> Void) {
+        APIClient.shared.register(username: username, email: email, password: password) { result in
             switch result {
-            case .success(let user):
-                self.user = user
+            case .success(let authResponse):
+                self.authResponse = authResponse
             case .failure(let error):
                 self.error = error.localizedDescription
             }
@@ -23,11 +23,11 @@ class AuthViewModel {
         }
     }
 
-    func login(username: String, password: String, completion: @escaping () -> Void) {
-        APIClient.shared.login(username: username, password: password) { result in
+    func login(email: String, password: String, completion: @escaping () -> Void) {
+        APIClient.shared.login(email: email, password: password) { result in
             switch result {
-            case .success(let user):
-                self.user = user
+            case .success(let authResponse):
+                self.authResponse = authResponse
             case .failure(let error):
                 self.error = error.localizedDescription
             }

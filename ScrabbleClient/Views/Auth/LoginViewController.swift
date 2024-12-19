@@ -10,9 +10,10 @@ import UIKit
 class LoginViewController: UIViewController {
     private let viewModel = AuthViewModel()
     
-    private let usernameField: UITextField = {
+    private let emailField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Username"
+        textField.placeholder = "Email"
+        textField.text = "Email"
         textField.borderStyle = .roundedRect
         return textField
     }()
@@ -20,6 +21,7 @@ class LoginViewController: UIViewController {
     private let passwordField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Password"
+        textField.text = "Password"
         textField.isSecureTextEntry = true
         textField.borderStyle = .roundedRect
         return textField
@@ -46,23 +48,23 @@ class LoginViewController: UIViewController {
     }
     
     private func setupViews() {
-        view.addSubview(usernameField)
+        view.addSubview(emailField)
         view.addSubview(passwordField)
         view.addSubview(loginButton)
         view.addSubview(registerButton)
         
-        usernameField.translatesAutoresizingMaskIntoConstraints = false
+        emailField.translatesAutoresizingMaskIntoConstraints = false
         passwordField.translatesAutoresizingMaskIntoConstraints = false
         loginButton.translatesAutoresizingMaskIntoConstraints = false
         registerButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            usernameField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            usernameField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -30),
-            usernameField.widthAnchor.constraint(equalToConstant: 200),
+            emailField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emailField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -30),
+            emailField.widthAnchor.constraint(equalToConstant: 200),
             
             passwordField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            passwordField.topAnchor.constraint(equalTo: usernameField.bottomAnchor, constant: 20),
+            passwordField.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: 20),
             passwordField.widthAnchor.constraint(equalToConstant: 200),
             
             loginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -77,23 +79,24 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func loginTapped() {
-        guard let username = usernameField.text, !username.isEmpty,
+        guard let email = emailField.text, !email.isEmpty,
               let password = passwordField.text, !password.isEmpty else {
             print("Missing fields")
             return
         }
         
-        viewModel.login(username: username, password: password) {
+        viewModel.login(email: email, password: password) {
             DispatchQueue.main.async {
-                if let user = self.viewModel.user {
-                    print("Welcome, \(user.username)")
+                if let authResponse = self.viewModel.authResponse {
+                
+                    print("Welcome, \(authResponse.user.id)")
                     
                     self.navigationController?.pushViewController(GameStartViewController(), animated: true)
                     
                 } else if let error = self.viewModel.error {
                     print("Error: \(error)")
                     
-                    self.navigationController?.pushViewController(GameStartViewController(), animated: true)
+//                    self.navigationController?.pushViewController(GameStartViewController(), animated: true)
                 }
             }
         }
