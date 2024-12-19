@@ -31,20 +31,30 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private let registerButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Register?", for: .normal)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupViews()
+        
+        navigationItem.hidesBackButton = true
     }
     
     private func setupViews() {
         view.addSubview(usernameField)
         view.addSubview(passwordField)
         view.addSubview(loginButton)
+        view.addSubview(registerButton)
         
         usernameField.translatesAutoresizingMaskIntoConstraints = false
         passwordField.translatesAutoresizingMaskIntoConstraints = false
         loginButton.translatesAutoresizingMaskIntoConstraints = false
+        registerButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             usernameField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -56,10 +66,14 @@ class LoginViewController: UIViewController {
             passwordField.widthAnchor.constraint(equalToConstant: 200),
             
             loginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            loginButton.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 20)
+            loginButton.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 20),
+            
+            registerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            registerButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
         
         loginButton.addTarget(self, action: #selector(loginTapped), for: .touchUpInside)
+        registerButton.addTarget(self, action: #selector(registerTapped), for: .touchUpInside)
     }
     
     @objc private func loginTapped() {
@@ -73,11 +87,19 @@ class LoginViewController: UIViewController {
             DispatchQueue.main.async {
                 if let user = self.viewModel.user {
                     print("Welcome, \(user.username)")
+                    
+                    self.navigationController?.pushViewController(GameStartViewController(), animated: true)
+                    
                 } else if let error = self.viewModel.error {
                     print("Error: \(error)")
+                    
+                    self.navigationController?.pushViewController(GameStartViewController(), animated: true)
                 }
             }
         }
     }
+    
+    @objc private func registerTapped() {
+        navigationController?.pushViewController(RegisterViewController(), animated: true)
+    }
 }
-

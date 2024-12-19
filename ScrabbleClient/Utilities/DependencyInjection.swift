@@ -15,7 +15,6 @@ protocol APIClientProtocol {
     func joinRoom(inviteCode: String, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
-
 // Внедрение зависимостей с использованием APIClient
 class DependencyInjection {
     static let shared = DependencyInjection()

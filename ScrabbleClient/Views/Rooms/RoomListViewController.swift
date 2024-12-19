@@ -9,10 +9,19 @@ import UIKit
 
 class RoomListViewController: UIViewController {
     
-    private let viewModel = RoomViewModel(apiClient: DependencyInjection.shared.provideAPIClient())
+    private let viewModel: RoomViewModel
     private var tableView = UITableView()
     private let loadingView = LoadingView()
     private let errorView = ErrorView()
+        
+    init(viewModel: RoomViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+        
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

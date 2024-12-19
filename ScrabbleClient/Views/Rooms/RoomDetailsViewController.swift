@@ -10,7 +10,6 @@ import UIKit
 class RoomDetailsViewController: UIViewController {
     
     private let room: Room
-//    private let viewModel = RoomViewModel()
     private let viewModel = RoomViewModel(apiClient: DependencyInjection.shared.provideAPIClient())
     
     private let deleteButton: UIButton = {

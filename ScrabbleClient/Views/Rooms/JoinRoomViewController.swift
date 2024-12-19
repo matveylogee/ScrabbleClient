@@ -9,7 +9,16 @@ import UIKit
 
 class JoinRoomViewController: UIViewController {
     
-    private let viewModel = RoomViewModel(apiClient: DependencyInjection.shared.provideAPIClient())
+    private let viewModel: RoomViewModel
+        
+    init(viewModel: RoomViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+        
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private let inviteCodeField: UITextField = {
         let textField = UITextField()

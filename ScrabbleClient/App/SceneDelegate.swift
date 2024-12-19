@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         
         // Устанавливаем начальный экран
-        let navigationController = UINavigationController(rootViewController: RegisterViewController())
+        let navigationController = UINavigationController(rootViewController: LoginViewController())
         window?.rootViewController = navigationController
         
         window?.makeKeyAndVisible()
