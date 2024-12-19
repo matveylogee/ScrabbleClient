@@ -8,8 +8,22 @@
 import Foundation
 
 struct Room: Codable {
-    let id: Int
-    let name: String
-    let isPrivate: Bool
-    let inviteCode: String?
+    var id: String
+    var adminId: String
+    var isPrivate: Bool
+    var inviteCode: String?
+    
+    init(from decoder: GetRoomsResponse) {
+        id = "NO ID"
+        adminId = decoder.adminID
+        isPrivate = false // MARK: todo
+        inviteCode = decoder.inviteCode
+    }
+    
+    init() {
+        id = "NO ID"
+        adminId = "NO ADMIN ID"
+        isPrivate = false
+        inviteCode = nil
+    }
 }

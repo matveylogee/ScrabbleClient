@@ -17,10 +17,15 @@ class RoomViewModel {
     }
     
     // Создание комнаты
-    func createRoom(name: String, isPrivate: Bool, completion: @escaping (Bool) -> Void) {
-        apiClient.createRoom(name: name, isPrivate: isPrivate) { result in
+    func createRoom(isPrivate: Bool, completion: @escaping (Bool) -> Void) {
+        apiClient.createRoom(isPrivate: isPrivate) { result in
             switch result {
-            case .success(let room):
+            case .success(let roomResponse):
+                var room = Room()
+                room.id = roomResponse.id
+                room.adminId = roomResponse.adminID
+                room.isPrivate = roomResponse.isPrivate
+                room.inviteCode = roomResponse.inviteCode
                 self.rooms.append(room)
                 completion(true)
             case .failure(let error):
@@ -31,7 +36,7 @@ class RoomViewModel {
     }
 
     // Удаление комнаты
-    func deleteRoom(roomID: Int, completion: @escaping (Bool) -> Void) {
+    func deleteRoom(roomID: String, completion: @escaping (Bool) -> Void) {
         apiClient.deleteRoom(roomID: roomID) { result in
             switch result {
             case .success:
@@ -45,11 +50,14 @@ class RoomViewModel {
     }
 
     // Получение списка комнат
-    func fetchRooms(completion: @escaping () -> Void) {
-        apiClient.fetchRooms { result in
+    func getPublicRooms(completion: @escaping () -> Void) {
+        apiClient.getPublicRooms { result in
             switch result {
-            case .success(let rooms):
-                self.rooms = rooms
+            case .success(let roomsResponse):
+                self.rooms = []
+                for resp in roomsResponse {
+                    self.rooms.append(Room(from: resp))
+                }
             case .failure(let error):
                 self.error = error.localizedDescription
             }

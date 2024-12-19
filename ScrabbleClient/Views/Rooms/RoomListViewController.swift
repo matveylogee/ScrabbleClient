@@ -66,7 +66,7 @@ class RoomListViewController: UIViewController {
         loadingView.isHidden = false
         errorView.isHidden = true
         
-        viewModel.fetchRooms { [weak self] in
+        viewModel.getPublicRooms { [weak self] in
             DispatchQueue.main.async {
                 self?.loadingView.isHidden = true
                 if self?.viewModel.error != nil {
@@ -88,7 +88,7 @@ extension RoomListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "RoomCell", for: indexPath)
         let room = viewModel.rooms[indexPath.row]
-        cell.textLabel?.text = room.name
+        cell.textLabel?.text = "\(room.adminId)'s game"
         return cell
     }
 }

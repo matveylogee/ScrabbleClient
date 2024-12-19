@@ -9,7 +9,7 @@ import Foundation
 
 struct Constants {
     struct API {
-        static let baseURL = "http://localhost:8080/api"
+        static let baseURL = "http://localhost:8080"
     }
     
     struct Messages {

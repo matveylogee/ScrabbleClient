@@ -14,7 +14,7 @@ class RegisterViewController: UIViewController {
     private let usernameField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Username"
-        textField.text = "username"
+        textField.text = "Username"
         textField.borderStyle = .roundedRect
         return textField
     }()
@@ -22,7 +22,7 @@ class RegisterViewController: UIViewController {
     private let emailField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Email"
-        textField.text = "email"
+        textField.text = "Email"
         textField.borderStyle = .roundedRect
         return textField
     }()
@@ -30,7 +30,7 @@ class RegisterViewController: UIViewController {
     private let passwordField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Password"
-        textField.text = "password"
+        textField.text = "Password"
 //        textField.isSecureTextEntry = true
         textField.borderStyle = .roundedRect
         return textField
@@ -104,6 +104,10 @@ class RegisterViewController: UIViewController {
             DispatchQueue.main.async {
                 if let authResponse = self.viewModel.authResponse {
                     self.statusLabel.text = "Welcome, \(authResponse.user.id)! Registration successful."
+                    
+                    APIClient.shared.bearerToken = authResponse.value
+                    
+                    self.navigationController?.pushViewController(GameStartViewController(), animated: true)
                 } else if let error = self.viewModel.error {
                     print(error)
                     self.statusLabel.text = "Error: \(error)"

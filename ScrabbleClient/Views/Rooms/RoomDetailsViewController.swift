@@ -22,7 +22,7 @@ class RoomDetailsViewController: UIViewController {
     init(room: Room) {
         self.room = room
         super.init(nibName: nil, bundle: nil)
-        title = room.name
+        title = "\(room.adminId)'s game" //MARK: just a plug
     }
     
     required init?(coder: NSCoder) {

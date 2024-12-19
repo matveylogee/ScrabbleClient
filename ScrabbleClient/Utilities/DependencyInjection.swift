@@ -9,9 +9,9 @@ import Foundation
 
 // Протокол для API клиента
 protocol APIClientProtocol {
-    func fetchRooms(completion: @escaping (Result<[Room], Error>) -> Void)
-    func createRoom(name: String, isPrivate: Bool, completion: @escaping (Result<Room, Error>) -> Void)
-    func deleteRoom(roomID: Int, completion: @escaping (Result<Void, Error>) -> Void)
+    func getPublicRooms(completion: @escaping (Result<[GetRoomsResponse], Error>) -> Void)
+    func createRoom(isPrivate: Bool, completion: @escaping (Result<RoomResponse, Error>) -> Void)
+    func deleteRoom(roomID: String, completion: @escaping (Result<Void, Error>) -> Void)
     func joinRoom(inviteCode: String, completion: @escaping (Result<Void, Error>) -> Void)
 }
 

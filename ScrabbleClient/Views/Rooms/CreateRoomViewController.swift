@@ -32,6 +32,14 @@ class CreateRoomViewController: UIViewController {
         return toggle
     }()
     
+    private let privateSwiftLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Is room private"
+        label.font = .systemFont(ofSize: 12)
+        label.textColor = .lightGray
+        return label
+    }()
+    
     private let createButton = CustomButton()
     private let errorView = ErrorView()
     
@@ -45,6 +53,7 @@ class CreateRoomViewController: UIViewController {
     private func setupViews() {
         view.addSubview(nameField)
         view.addSubview(privateSwitch)
+        view.addSubview(privateSwiftLabel)
         view.addSubview(createButton)
         view.addSubview(errorView)
         
@@ -54,6 +63,7 @@ class CreateRoomViewController: UIViewController {
         nameField.translatesAutoresizingMaskIntoConstraints = false
         privateSwitch.translatesAutoresizingMaskIntoConstraints = false
         createButton.translatesAutoresizingMaskIntoConstraints = false
+        privateSwiftLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             nameField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -62,6 +72,9 @@ class CreateRoomViewController: UIViewController {
             
             privateSwitch.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             privateSwitch.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 20),
+            
+            privateSwiftLabel.leadingAnchor.constraint(equalTo: privateSwitch.leadingAnchor, constant: 60),
+            privateSwiftLabel.centerYAnchor.constraint(equalTo: privateSwitch.centerYAnchor),
             
             createButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             createButton.topAnchor.constraint(equalTo: privateSwitch.bottomAnchor, constant: 20),
@@ -73,14 +86,14 @@ class CreateRoomViewController: UIViewController {
     }
     
     @objc private func createRoomTapped() {
-        guard let name = nameField.text, !name.isEmpty else {
-            errorView.setError("Room name cannot be empty.")
-            errorView.isHidden = false
-            return
-        }
+//        guard let name = nameField.text, !name.isEmpty else {
+//            errorView.setError("Room name cannot be empty.")
+//            errorView.isHidden = false
+//            return
+//        }
         
         errorView.isHidden = true
-        viewModel.createRoom(name: name, isPrivate: privateSwitch.isOn) { [weak self] success in
+        viewModel.createRoom(isPrivate: privateSwitch.isOn) { [weak self] success in
             DispatchQueue.main.async {
                 if success {
                     self?.navigationController?.popViewController(animated: true)

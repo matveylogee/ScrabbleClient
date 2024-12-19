@@ -91,6 +91,8 @@ class LoginViewController: UIViewController {
                 
                     print("Welcome, \(authResponse.user.id)")
                     
+                    APIClient.shared.bearerToken = authResponse.value
+                    
                     self.navigationController?.pushViewController(GameStartViewController(), animated: true)
                     
                 } else if let error = self.viewModel.error {

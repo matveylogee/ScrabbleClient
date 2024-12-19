@@ -8,6 +8,8 @@
 import UIKit
 
 class GameStartViewController: UIViewController {
+    
+    var bearerToken: String?
 
     private let createRoomButton: UIButton = {
         let button = UIButton(type: .system)

@@ -9,11 +9,12 @@ import Foundation
 
 class APIClient: APIClientProtocol {
     static let shared = APIClient()
+    var bearerToken: String?
     private let baseURL = Constants.API.baseURL
 
     // MARK: - Register
     func register(username: String, email: String, password: String, completion: @escaping (Result<AuthResponse, Error>) -> Void) {
-        guard let url = URL(string: "\(baseURL)/v1/auth/register") else { return }
+        guard let url = URL(string: "\(baseURL)/api/v1/auth/register") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -37,7 +38,7 @@ class APIClient: APIClientProtocol {
 
     // MARK: - Login
     func login(email: String, password: String, completion: @escaping (Result<AuthResponse, Error>) -> Void) {
-        guard let url = URL(string: "\(baseURL)/v1/auth/login") else { return }
+        guard let url = URL(string: "\(baseURL)/api/v1/auth/login") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -173,23 +174,26 @@ class APIClient: APIClientProtocol {
     }
     
     // MARK: - Create Room
-    func createRoom(name: String, isPrivate: Bool, completion: @escaping (Result<Room, Error>) -> Void) {
-        guard let url = URL(string: "\(baseURL)/rooms") else { return }
+    func createRoom(isPrivate: Bool, completion: @escaping (Result<RoomResponse, Error>) -> Void) {
+        guard let url = URL(string: "\(baseURL)/rooms/create") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+        request.setValue("Bearer \(bearerToken ?? "")", forHTTPHeaderField: "Authorization")
         let body: [String: Any] = [
-            "name": name,
-            "isPrivate": isPrivate
+            "timePerTurn": 10,
+            "isPrivate": isPrivate,
+            "maxPlayers": 10
         ]
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
         
         URLSession.shared.dataTask(with: request) { data, _, error in
+            print("[ DEBUG ]: response (URL: \(url.absoluteString)):\n \(print(String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)))")
             if let data = data {
                 do {
-                    let room = try JSONDecoder().decode(Room.self, from: data)
-                    completion(.success(room))
+                    let roomResponse = try JSONDecoder().decode(RoomResponse.self, from: data)
+                    print("[ DEBUG ]: room created")
+                    completion(.success(roomResponse))
                 } catch {
                     completion(.failure(error))
                 }
@@ -200,12 +204,13 @@ class APIClient: APIClientProtocol {
     }
 
     // MARK: - Delete Room
-    func deleteRoom(roomID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+    func deleteRoom(roomID: String, completion: @escaping (Result<Void, Error>) -> Void) {
         guard let url = URL(string: "\(baseURL)/rooms/\(roomID)") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         
-        URLSession.shared.dataTask(with: request) { _, _, error in
+        URLSession.shared.dataTask(with: request) { data, _, error in
+            print("[ DEBUG ]: response (URL: \(url.absoluteString)):\n \(print(String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)))")
             if let error = error {
                 completion(.failure(error))
             } else {
@@ -219,6 +224,7 @@ class APIClient: APIClientProtocol {
         guard let url = URL(string: "\(baseURL)/rooms") else { return }
         
         URLSession.shared.dataTask(with: url) { data, _, error in
+            print("[ DEBUG ]: response (URL: \(url.absoluteString)):\n \(print(String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)))")
             if let data = data {
                 do {
                     let rooms = try JSONDecoder().decode([Room].self, from: data)
@@ -247,6 +253,33 @@ class APIClient: APIClientProtocol {
                 completion(.failure(error))
             } else {
                 completion(.success(()))
+            }
+        }.resume()
+    }
+    
+    //MARK:  - getPublicRooms
+    func getPublicRooms(completion: @escaping (Result<[GetRoomsResponse], Error>) -> Void) {
+        guard let url = URL(string: "\(baseURL)/rooms/getPublic") else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("Bearer \(bearerToken ?? "")", forHTTPHeaderField: "Authorization")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        URLSession.shared.dataTask(with: request) { data, _, error in
+            print("[ DEBUG ]: response (URL: \(url.absoluteString)):\n \(print(String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)))")
+            if let data = data {
+                do {
+                    print("[ DEBUG ]: decoding (JSONDecoder)")
+                    print("[ DEBUG ]: \(String(reflecting: data))")
+                    let rooms = try JSONDecoder().decode([GetRoomsResponse].self, from: data)
+                    completion(.success(rooms))
+                } catch {
+                    completion(.failure(error))
+                    print(" [ERROR]: \(String(reflecting: error))")
+                }
+            } else if let error = error {
+                print(" [ERROR]: \(String(reflecting: error))")
+                completion(.failure(error))
             }
         }.resume()
     }
