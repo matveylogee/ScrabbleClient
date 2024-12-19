@@ -1,0 +1,85 @@
+//
+//  CreateRoomViewController.swift
+//  ScrabbleClient
+//
+//  Created by Матвей on 17.12.2024.
+//
+
+import UIKit
+
+class CreateRoomViewController: UIViewController {
+    
+    private let viewModel = RoomViewModel(apiClient: DependencyInjection.shared.provideAPIClient())
+    
+    private let nameField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Room Name"
+        textField.borderStyle = .roundedRect
+        return textField
+    }()
+    
+    private let privateSwitch: UISwitch = {
+        let toggle = UISwitch()
+        return toggle
+    }()
+    
+    private let createButton = CustomButton()
+    private let errorView = ErrorView()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        title = "Create Room"
+        view.backgroundColor = .white
+        setupViews()
+    }
+    
+    private func setupViews() {
+        view.addSubview(nameField)
+        view.addSubview(privateSwitch)
+        view.addSubview(createButton)
+        view.addSubview(errorView)
+        
+        errorView.frame = view.bounds
+        errorView.isHidden = true
+        
+        nameField.translatesAutoresizingMaskIntoConstraints = false
+        privateSwitch.translatesAutoresizingMaskIntoConstraints = false
+        createButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            nameField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            nameField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -60),
+            nameField.widthAnchor.constraint(equalToConstant: 250),
+            
+            privateSwitch.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            privateSwitch.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 20),
+            
+            createButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            createButton.topAnchor.constraint(equalTo: privateSwitch.bottomAnchor, constant: 20),
+            createButton.widthAnchor.constraint(equalToConstant: 200)
+        ])
+        
+        createButton.setTitle("Create Room")
+        createButton.addTarget(self, action: #selector(createRoomTapped), for: .touchUpInside)
+    }
+    
+    @objc private func createRoomTapped() {
+        guard let name = nameField.text, !name.isEmpty else {
+            errorView.setError("Room name cannot be empty.")
+            errorView.isHidden = false
+            return
+        }
+        
+        errorView.isHidden = true
+        viewModel.createRoom(name: name, isPrivate: privateSwitch.isOn) { [weak self] success in
+            DispatchQueue.main.async {
+                if success {
+                    self?.navigationController?.popViewController(animated: true)
+                } else {
+                    self?.errorView.setError("Failed to create room. Try again.")
+                    self?.errorView.isHidden = false
+                }
+            }
+        }
+    }
+}

@@ -9,7 +9,7 @@ import UIKit
 
 class JoinRoomViewController: UIViewController {
     
-    private let viewModel = RoomViewModel()
+    private let viewModel = RoomViewModel(apiClient: DependencyInjection.shared.provideAPIClient())
     
     private let inviteCodeField: UITextField = {
         let textField = UITextField()
@@ -18,15 +18,11 @@ class JoinRoomViewController: UIViewController {
         return textField
     }()
     
-    private let joinButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Join Room", for: .normal)
-        return button
-    }()
-    
+    private let joinButton = CustomButton()
     private let statusLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
+        label.textColor = .red
         return label
     }()
     
@@ -48,30 +44,40 @@ class JoinRoomViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             inviteCodeField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            inviteCodeField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20),
+            inviteCodeField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -30),
             inviteCodeField.widthAnchor.constraint(equalToConstant: 250),
             
             joinButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             joinButton.topAnchor.constraint(equalTo: inviteCodeField.bottomAnchor, constant: 20),
+            joinButton.widthAnchor.constraint(equalToConstant: 200),
             
             statusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            statusLabel.topAnchor.constraint(equalTo: joinButton.bottomAnchor, constant: 20)
+            statusLabel.topAnchor.constraint(equalTo: joinButton.bottomAnchor, constant: 20),
+            statusLabel.widthAnchor.constraint(equalToConstant: 300)
         ])
         
+        joinButton.setTitle("Join Room")
         joinButton.addTarget(self, action: #selector(joinRoomTapped), for: .touchUpInside)
     }
     
     @objc private func joinRoomTapped() {
-        guard let code = inviteCodeField.text, !code.isEmpty else {
-            statusLabel.text = "Please enter an invite code."
+        guard let inviteCode = inviteCodeField.text, !inviteCode.isBlank else {
+            statusLabel.text = "Invite code cannot be empty."
             return
         }
         
-        viewModel.joinRoom(inviteCode: code) { success in
+        statusLabel.text = ""
+        viewModel.joinRoom(inviteCode: inviteCode) { success in
             DispatchQueue.main.async {
-                self.statusLabel.text = success ? "Successfully joined the room." : "Failed to join the room."
+                if success {
+                    self.statusLabel.textColor = .green
+                    self.statusLabel.text = "Successfully joined the room!"
+                    self.navigationController?.popViewController(animated: true)
+                } else {
+                    self.statusLabel.textColor = .red
+                    self.statusLabel.text = self.viewModel.error ?? "Failed to join the room."
+                }
             }
         }
     }
 }
-

@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+struct Room: Codable {
+    let id: Int
+    let name: String
+    let isPrivate: Bool
+    let inviteCode: String?
+}
