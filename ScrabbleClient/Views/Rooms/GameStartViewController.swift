@@ -10,6 +10,13 @@ import UIKit
 class GameStartViewController: UIViewController {
     
     var bearerToken: String?
+    
+    private let roomLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Room"
+        label.font = UIFont.boldSystemFont(ofSize: 36)
+        return label
+    }()
 
     private let createRoomButton: UIButton = {
         let button = UIButton(type: .system)
@@ -42,15 +49,20 @@ class GameStartViewController: UIViewController {
     }
     
     private func setupViews() {
+        view.addSubview(roomLabel)
         view.addSubview(createRoomButton)
         view.addSubview(joinRoomButton)
         view.addSubview(roomListButton)
         
+        roomLabel.translatesAutoresizingMaskIntoConstraints = false
         createRoomButton.translatesAutoresizingMaskIntoConstraints = false
         joinRoomButton.translatesAutoresizingMaskIntoConstraints = false
         roomListButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            roomLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            roomLabel.centerYAnchor.constraint(equalTo: view.topAnchor, constant: 200),
+
             createRoomButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             createRoomButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -60),
             createRoomButton.widthAnchor.constraint(equalToConstant: 250),

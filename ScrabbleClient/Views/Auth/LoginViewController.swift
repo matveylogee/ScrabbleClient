@@ -10,6 +10,29 @@ import UIKit
 class LoginViewController: UIViewController {
     private let viewModel = AuthViewModel()
     
+    private let gameName: UILabel = {
+        let label = UILabel()
+        label.text = "Scrabble"
+        label.font = UIFont.boldSystemFont(ofSize: 36)
+        return label
+    }()
+    
+    private let emailLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Email:"
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.textColor = UIColor.black.withAlphaComponent(0.5)
+        return label
+    }()
+    
+    private let passwordLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Password:"
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.textColor = UIColor.black.withAlphaComponent(0.5)
+        return label
+    }()
+    
     private let emailField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Email"
@@ -48,20 +71,37 @@ class LoginViewController: UIViewController {
     }
     
     private func setupViews() {
+        view.addSubview(gameName)
+        view.addSubview(emailLabel)
         view.addSubview(emailField)
+        view.addSubview(passwordLabel)
         view.addSubview(passwordField)
         view.addSubview(loginButton)
         view.addSubview(registerButton)
         
+        gameName.translatesAutoresizingMaskIntoConstraints = false
+        emailLabel.translatesAutoresizingMaskIntoConstraints = false
         emailField.translatesAutoresizingMaskIntoConstraints = false
+        passwordLabel.translatesAutoresizingMaskIntoConstraints = false
         passwordField.translatesAutoresizingMaskIntoConstraints = false
         loginButton.translatesAutoresizingMaskIntoConstraints = false
         registerButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            gameName.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            gameName.centerYAnchor.constraint(equalTo: view.topAnchor, constant: 200),
+
+            emailLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emailLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -45),
+            emailLabel.widthAnchor.constraint(equalToConstant: 200),
+            
             emailField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emailField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -30),
+            emailField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20),
             emailField.widthAnchor.constraint(equalToConstant: 200),
+
+            passwordLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            passwordLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 10),
+            passwordLabel.widthAnchor.constraint(equalToConstant: 200),
             
             passwordField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             passwordField.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: 20),
