@@ -39,6 +39,13 @@ class GameStartViewController: UIViewController {
         return button
     }()
     
+    private let leaveAccount: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Выйти", for: .normal)
+        button.tintColor = .red
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Начать игру"
@@ -53,11 +60,13 @@ class GameStartViewController: UIViewController {
         view.addSubview(createRoomButton)
         view.addSubview(joinRoomButton)
         view.addSubview(roomListButton)
+        view.addSubview(leaveAccount)
         
         roomLabel.translatesAutoresizingMaskIntoConstraints = false
         createRoomButton.translatesAutoresizingMaskIntoConstraints = false
         joinRoomButton.translatesAutoresizingMaskIntoConstraints = false
         roomListButton.translatesAutoresizingMaskIntoConstraints = false
+        leaveAccount.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             roomLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -73,7 +82,11 @@ class GameStartViewController: UIViewController {
             
             roomListButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             roomListButton.topAnchor.constraint(equalTo: joinRoomButton.bottomAnchor, constant: 20),
-            roomListButton.widthAnchor.constraint(equalToConstant: 250)
+            roomListButton.widthAnchor.constraint(equalToConstant: 250),
+            
+            leaveAccount.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            leaveAccount.centerYAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
+            leaveAccount.widthAnchor.constraint(equalToConstant: 250)
         ])
         
         joinRoomButton.addTarget(self, action: #selector(joinRoomTapped), for: .touchUpInside)
