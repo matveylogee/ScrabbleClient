@@ -92,6 +92,7 @@ class GameStartViewController: UIViewController {
         joinRoomButton.addTarget(self, action: #selector(joinRoomTapped), for: .touchUpInside)
         createRoomButton.addTarget(self, action: #selector(createRoomTapped), for: .touchUpInside)
         roomListButton.addTarget(self, action: #selector(roomListTapped), for: .touchUpInside)
+        leaveAccount.addTarget(self, action: #selector(leaveAccountTapped), for: .touchUpInside)
     }
     
     @objc private func createRoomTapped() {
@@ -110,6 +111,11 @@ class GameStartViewController: UIViewController {
         let viewModel = RoomViewModel(apiClient: DependencyInjection.shared.provideAPIClient())
         let roomListVC = RoomListViewController(viewModel: viewModel)
         navigationController?.pushViewController(roomListVC, animated: true)
+    }
+    
+    @objc private func leaveAccountTapped() {
+        APIClient.shared.bearerToken = ""
+        navigationController?.pushViewController(LoginViewController(), animated: true)
     }
 }
 

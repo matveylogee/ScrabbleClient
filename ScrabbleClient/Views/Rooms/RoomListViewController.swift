@@ -91,4 +91,10 @@ extension RoomListViewController: UITableViewDataSource, UITableViewDelegate {
         cell.textLabel?.text = "\(room.adminId)'s game"
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("[ DEBUG ]: clicked on table row")
+        present(GameBoardViewController(), animated: true, completion: nil)
+//        present(GameBoardViewController(room: viewModel.rooms[indexPath.index]), animated: true, completion: nil)
+    }
 }
