@@ -64,7 +64,7 @@ class AccountDeletionViewController: UIViewController {
     }
     
     @objc private func deleteAccountTapped() {
-        guard let username = usernameField.text, !username.isEmpty else {
+        guard let username = usernameField.text, (username).isEmpty else {
             statusLabel.text = "Please enter your username."
             return
         }

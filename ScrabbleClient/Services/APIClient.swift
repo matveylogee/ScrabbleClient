@@ -60,7 +60,6 @@ class APIClient: APIClientProtocol {
         print("[ DEBUG ]: login request created")
         
         URLSession.shared.dataTask(with: request) { data, _, error in
-            print("[ DEBUG ]: response: \(print(String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)))")
             if let data = data {
                 do {
                     let authResponse = try JSONDecoder().decode(AuthResponse.self, from: data)
@@ -188,7 +187,6 @@ class APIClient: APIClientProtocol {
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
         
         URLSession.shared.dataTask(with: request) { data, _, error in
-            print("[ DEBUG ]: response (URL: \(url.absoluteString)):\n \(print(String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)))")
             if let data = data {
                 do {
                     let roomResponse = try JSONDecoder().decode(RoomResponse.self, from: data)
@@ -210,7 +208,6 @@ class APIClient: APIClientProtocol {
         request.httpMethod = "DELETE"
         
         URLSession.shared.dataTask(with: request) { data, _, error in
-            print("[ DEBUG ]: response (URL: \(url.absoluteString)):\n \(print(String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)))")
             if let error = error {
                 completion(.failure(error))
             } else {
@@ -224,7 +221,6 @@ class APIClient: APIClientProtocol {
         guard let url = URL(string: "\(baseURL)/rooms") else { return }
         
         URLSession.shared.dataTask(with: url) { data, _, error in
-            print("[ DEBUG ]: response (URL: \(url.absoluteString)):\n \(print(String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)))")
             if let data = data {
                 do {
                     let rooms = try JSONDecoder().decode([Room].self, from: data)
@@ -266,7 +262,6 @@ class APIClient: APIClientProtocol {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         URLSession.shared.dataTask(with: request) { data, _, error in
-            print("[ DEBUG ]: response (URL: \(url.absoluteString)):\n \(print(String(NSString(data: data!, encoding: NSUTF8StringEncoding)!)))")
             if let data = data {
                 do {
                     print("[ DEBUG ]: decoding (JSONDecoder)")

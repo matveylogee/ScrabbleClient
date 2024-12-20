@@ -30,7 +30,7 @@ class RegisterViewController: UIViewController {
     private let passwordField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Password"
-        textField.text = "Password"
+        textField.text = "password"
 //        textField.isSecureTextEntry = true
         textField.borderStyle = .roundedRect
         return textField
