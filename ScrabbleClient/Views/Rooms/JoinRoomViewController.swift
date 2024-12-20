@@ -82,6 +82,7 @@ class JoinRoomViewController: UIViewController {
                     self.statusLabel.textColor = .green
                     self.statusLabel.text = "Successfully joined the room!"
                     self.navigationController?.popViewController(animated: true)
+                    self.present(GameBoardViewController(), animated: true, completion: nil)
                 } else {
                     self.statusLabel.textColor = .red
                     self.statusLabel.text = self.viewModel.error ?? "Failed to join the room."
